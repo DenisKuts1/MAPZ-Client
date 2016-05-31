@@ -2,17 +2,16 @@
 
 <?import javafx.scene.media.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CourseController">
    <children>
-      <MediaView fitHeight="200.0" fitWidth="200.0" layoutX="150.0" layoutY="33.0" />
-      <Button layoutX="122.0" layoutY="324.0" mnemonicParsing="false" text="Edit Course" />
-      <Button layoutX="282.0" layoutY="324.0" mnemonicParsing="false" text="Evaluate Course" />
+      <MediaView fx:id="mediaPlayer" fitHeight="300.0" fitWidth="400.0" layoutX="57.0" layoutY="14.0" />
+      <Button layoutX="121.0" layoutY="343.0" mnemonicParsing="false" onAction="#editOnAction" text="Edit Course" />
+      <Button layoutX="282.0" layoutY="343.0" mnemonicParsing="false" onAction="#evaluateOnAction" text="Evaluate Course" />
+      <Button layoutX="95.0" layoutY="302.0" mnemonicParsing="false" onAction="#play" text="Play" />
+      <Button layoutX="172.0" layoutY="302.0" mnemonicParsing="false" onAction="#pause" text="Pause" />
+      <Button layoutX="256.0" layoutY="302.0" mnemonicParsing="false" onAction="#stop" text="Stop" />
    </children>
 </AnchorPane>
