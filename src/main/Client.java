@@ -1,6 +1,7 @@
 package main;
 
 import javafx.collections.ObservableList;
+import model.Course;
 import model.User;
 
 import java.io.DataOutputStream;
@@ -34,6 +35,23 @@ public class Client {
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
             return (ArrayList<String>)inputStream.readObject();
 
+    }
+
+    public Course course(String name){
+        try{
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("course\n" + name);
+            outputStream.flush();
+            return getCourse();
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    private Course getCourse()throws Exception{
+        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+        return (Course)inputStream.readObject();
     }
 
 
