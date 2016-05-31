@@ -18,6 +18,7 @@ import model.Course;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class CourseController {
 
@@ -42,33 +43,43 @@ public class CourseController {
     @FXML
     void chooseCourse(MouseEvent event) {
         course = Main.client.course(list.getSelectionModel().getSelectedItem());
+        boolean f = false;
         if (course != null) {
-            try {
-                Stage stage = new Stage();
-                stage.setScene(new Scene(Main.getParent("CourseForm.fxml")));
-                stage.show();
-                ((Stage) list.getScene().getWindow()).close();
 
-            } catch (Exception e) {
-
-            }
-        }
-    }
-
-    void checkVideoExist(String path) {
             File file = new File(course.getLink());
             if (file.exists()) {
                 Media media = new Media(file.toURI().toString());
                 player = new MediaPlayer(media);
                 player.setAutoPlay(true);
-            mediaPlayer.setMediaPlayer(player);
                 player.pause();
+                f = true;
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
                 Optional<ButtonType> result = alert.showAndWait();
                 if(result.get().equals(ButtonType.YES)){
                     f = true;
                 }
+            }
+            if(f){
+                try {
+                    Stage stage = new Stage();
+                    stage.setScene(new Scene(Main.getParent("CourseForm.fxml")));
+                    ((Stage) list.getScene().getWindow()).close();
+                    stage.show();
+
+
+                } catch (Exception e) {
+
+                }
+            }
+
+
+
+        }
+    }
+
+    void checkVideoExist(String path) {
+
     }
 
     @FXML
