@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import main.Client;
 
-import javax.swing.*;
-
 public class Main extends Application {
 
     public static Main main;
@@ -19,6 +17,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         main = this;
+
     }
 
     public static Parent getParent(String filename) throws Exception{
