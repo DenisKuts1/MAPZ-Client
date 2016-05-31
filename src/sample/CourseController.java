@@ -32,7 +32,7 @@ public class CourseController {
     @FXML
     private MediaView mediaPlayer;
 
-    private MediaPlayer player;
+    private static MediaPlayer player;
 
     @FXML
     void openOnAction(ActionEvent event) {
@@ -56,23 +56,25 @@ public class CourseController {
     }
 
     void checkVideoExist(String path) {
-        File file = new File(path);
-        if (file.exists()) {
-            Media media = new Media(file.toURI().toString());
-            player = new MediaPlayer(media);
-            player.setAutoPlay(true);
+            File file = new File(course.getLink());
+            if (file.exists()) {
+                Media media = new Media(file.toURI().toString());
+                player = new MediaPlayer(media);
+                player.setAutoPlay(true);
             mediaPlayer.setMediaPlayer(player);
-            player.pause();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
-            alert.show();
-        }
+                player.pause();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get().equals(ButtonType.YES)){
+                    f = true;
+                }
     }
 
     @FXML
     void initialize() {
-        assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'CourseListForm.fxml'.";
-        assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'CourseListForm.fxml'.";
+        //assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'CourseListForm.fxml'.";
+        //assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'CourseListForm.fxml'.";
         if (course == null) {
             try {
                 ArrayList<String> arrayList = Main.client.listOfCourses();
@@ -82,7 +84,7 @@ public class CourseController {
 
             }
         } else {
-            checkVideoExist(course.getLink());
+            mediaPlayer.setMediaPlayer(player);
         }
 
 
