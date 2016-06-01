@@ -12,6 +12,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import model.Course;
+import model.Mark;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class CourseController {
 
     @FXML
     private ProgressBar progressBar;
+
+    @FXML
+    private ListView<String> comments;
 
     public static ProgressBar bar;
 
@@ -116,6 +120,17 @@ public class CourseController {
             }
         } else {
             mediaPlayer.setMediaPlayer(player);
+            ArrayList<Mark> arrayList = Main.client.getAllMarks(course);
+            if(arrayList != null) {
+                ArrayList<String> strings = new ArrayList<>();
+                for (Mark mark : arrayList) {
+                    strings.add(mark.getUser().getUserName() + ": " + mark.getMark());
+                }
+                ObservableList<String> items = FXCollections.observableArrayList(strings);
+                comments.getItems().addAll(items);
+            } else {
+                System.out.println(2);
+            }
         }
 
 
