@@ -29,6 +29,16 @@ public class Client {
     public Client() {
     }
 
+    public void addComment(int mark, String comment){
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("comment\n" + mark + "\n" + comment + "\n" + Main.user.getUserName() + "\n" + CourseController.course.getTitle());
+        } catch (Exception e) {
+
+        }
+    }
+
     public ArrayList<Mark> getAllMarks(Course course){
         try {
             socket = new Socket("localhost", 7755);

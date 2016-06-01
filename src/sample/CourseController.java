@@ -21,10 +21,12 @@ import java.util.Optional;
 
 public class CourseController {
 
+    public TextField commentField;
+    public Slider markSlider;
     @FXML
     private Button openBtn;
 
-    private static Course course;
+    public static Course course;
 
     @FXML
     private ListView<String> list;
@@ -39,6 +41,7 @@ public class CourseController {
     private ListView<String> comments;
 
     public static ProgressBar bar;
+
 
     private static MediaPlayer player;
 
@@ -158,7 +161,38 @@ public class CourseController {
 
     @FXML
     void evaluateOnAction(ActionEvent event) {
-
+        int mark = (int) markSlider.getValue();
+        String comment = commentField.getText();
+        Main.client.addComment(mark, comment);
+        try{
+            Thread.sleep(10);
+        } catch (Exception e){}
+        ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
+        ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
+        if(!markArrayList.isEmpty()) {
+            ArrayList<String> strings = new ArrayList<>();
+            for (Mark mark1 : markArrayList) {
+                Comment comment1 = null;
+                for(Comment c : commentArrayList){
+                    if(c.getUser().getId() == mark1.getUser().getId()){
+                        comment1 = c;
+                        int a;
+                        break;
+                    }
+                }
+                String comm = mark1.getUser().getUserName() + ": " + mark1.getMark();
+                if(comment != null){
+                    comm += " | " + comment1.getComment();
+                }
+                strings.add(comm);
+            }
+            ObservableList<String> items = FXCollections.observableArrayList(strings);
+            comments.getItems().clear();
+            comments.getItems().addAll(items);
+            System.out.println(items.size());
+        } else {
+            System.out.println(2);
+        }
     }
 
     @FXML
