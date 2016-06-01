@@ -11,6 +11,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import model.Comment;
 import model.Course;
 import model.Mark;
 
@@ -120,17 +121,31 @@ public class CourseController {
             }
         } else {
             mediaPlayer.setMediaPlayer(player);
-            ArrayList<Mark> arrayList = Main.client.getAllMarks(course);
-            if(arrayList != null) {
+            ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
+            ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
+            if(markArrayList != null) {
                 ArrayList<String> strings = new ArrayList<>();
-                for (Mark mark : arrayList) {
-                    strings.add(mark.getUser().getUserName() + ": " + mark.getMark());
+                for (Mark mark : markArrayList) {
+                    Comment comment = null;
+                    for(Comment c : commentArrayList){
+                        if(c.getUser().getId() == mark.getUser().getId()){
+                            comment = c;
+                            break;
+                        }
+                    }
+                    String comm = mark.getUser().getUserName() + ": " + mark.getMark();
+                    if(comment != null){
+                        comm += " | " + comment.getComment();
+                    }
+                    strings.add(comm);
                 }
                 ObservableList<String> items = FXCollections.observableArrayList(strings);
                 comments.getItems().addAll(items);
             } else {
                 System.out.println(2);
             }
+
+
         }
 
 
