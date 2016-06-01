@@ -18,10 +18,12 @@ public class Main extends Application {
         primaryStage.show();
         main = this;
 
+
     }
 
     public static Parent getParent(String filename) throws Exception{
         return FXMLLoader.load(main.getClass().getResource(filename));
+
     }
 
 
