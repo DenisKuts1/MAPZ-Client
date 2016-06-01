@@ -56,7 +56,7 @@ public class CourseController {
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
                 Optional<ButtonType> result = alert.showAndWait();
-                if(result.get().equals(ButtonType.YES)){
+                if(result.get().equals(ButtonType.NO)){
                     f = true;
                 }
             }
