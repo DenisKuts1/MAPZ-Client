@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -33,6 +30,11 @@ public class CourseController {
     @FXML
     private MediaView mediaPlayer;
 
+    @FXML
+    private ProgressBar progressBar;
+
+    public static ProgressBar bar;
+
     private static MediaPlayer player;
 
     @FXML
@@ -40,40 +42,56 @@ public class CourseController {
 
     }
 
+    public static CourseController courseController;
+
     @FXML
     void chooseCourse(MouseEvent event) {
+
         course = Main.client.course(list.getSelectionModel().getSelectedItem());
-        boolean f = false;
         if (course != null) {
 
             File file = new File(course.getLink());
             if (file.exists()) {
-                Media media = new Media(file.toURI().toString());
-                player = new MediaPlayer(media);
-                player.setAutoPlay(true);
-                player.pause();
-                f = true;
+                openNewStage();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
                 Optional<ButtonType> result = alert.showAndWait();
-                if(result.get().equals(ButtonType.NO)){
-                    f = true;
-                }
-            }
-            if(f){
-                try {
-                    Stage stage = new Stage();
-                    stage.setScene(new Scene(Main.getParent("CourseForm.fxml")));
-                    ((Stage) list.getScene().getWindow()).close();
-                    stage.show();
+                if(result.get().equals(ButtonType.YES)){
 
 
-                } catch (Exception e) {
+                    Main.client.downloadFile(course.getLink());
+
 
                 }
             }
 
 
+
+        }
+    }
+
+    public void openNewStage(){
+
+        try {
+
+
+            File file = new File(course.getLink());
+            Media media = new Media(file.toURI().toString());
+            player = new MediaPlayer(media);
+            //mediaPlayer.setMediaPlayer(player);
+            //mediaPlayer.setVisible(true);
+            player.setAutoPlay(true);
+            player.pause();
+
+            Stage stage = new Stage();
+
+            stage.setScene(new Scene(Main.getParent("CourseForm.fxml")));
+            ((Stage) list.getScene().getWindow()).close();
+            stage.show();
+
+
+
+        } catch (Exception e) {
 
         }
     }
@@ -86,6 +104,8 @@ public class CourseController {
     void initialize() {
         //assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'CourseListForm.fxml'.";
         //assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'CourseListForm.fxml'.";
+        bar = progressBar;
+        courseController = this;
         if (course == null) {
             try {
                 ArrayList<String> arrayList = Main.client.listOfCourses();

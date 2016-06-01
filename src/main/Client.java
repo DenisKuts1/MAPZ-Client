@@ -1,14 +1,18 @@
 package main;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import model.Course;
 import model.User;
+import sample.CourseController;
+import sample.Main;
 
-import java.io.DataOutputStream;
 import java.io.*;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.Exchanger;
 
 /**
  * Created by denak on 16.05.2016.
@@ -16,6 +20,9 @@ import java.util.ArrayList;
 public class Client {
 
     Socket socket;
+    public boolean downloading = false;
+    public long sizeOfFile = 0;
+    public int alreadyReaded = 0;
 
     public Client() {
     }
@@ -34,8 +41,76 @@ public class Client {
     private ArrayList<String> getListOfCourses() throws Exception{
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
             return (ArrayList<String>)inputStream.readObject();
+    }
+
+    public void downloadFile(String filename){
+        try{
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("download\n" + filename);
+            outputStream.flush();
+            download(filename);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void download(String filename) throws Exception{
+        /*BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename));
+        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+        byte[] byteArray = new byte[8192];
+        while ((in = bis.read(byteArray)) != -1){
+            bos.write(byteArray,0,in);
+        }
+        bis.close();
+        bos.close();*/
+        downloading = true;
+
+
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filename));
+
+                byte[] byteArray = new byte[8192];
+                sizeOfFile = (long)inputStream.readObject();
+                alreadyReaded = 0;
+                System.out.println(sizeOfFile);
+                int in;
+                while ((in = bis.read(byteArray)) != -1){
+                    bos.write(byteArray,0,in);
+                    alreadyReaded += 8192;
+                    double a =  1.0 * alreadyReaded / sizeOfFile;
+                    System.out.println(a);
+                    try{
+                        Thread.sleep(1);
+                    }catch (Exception e){}
+                    updateValue(a);
+                }
+                bis.close();
+                bos.close();
+                inputStream.close();
+                System.out.println(1);
+                //CourseController.courseController.openNewStage();
+                System.out.println(1);
+                return 1.0;
+            }
+        };
+
+        CourseController.bar.progressProperty().unbind();
+        CourseController.bar.progressProperty().bind(task.valueProperty());
+        new Thread(task).start();
+
+
+
+
 
     }
+
+
+
 
     public Course course(String name){
         try{
