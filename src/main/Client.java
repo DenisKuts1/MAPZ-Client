@@ -4,7 +4,9 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import model.Comment;
 import model.Course;
+import model.Mark;
 import model.User;
 import sample.CourseController;
 import sample.Main;
@@ -27,6 +29,54 @@ public class Client {
     public Client() {
     }
 
+    public void addComment(int mark, String comment){
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("comment\n" + mark + "\n" + comment + "\n" + Main.user.getUserName() + "\n" + CourseController.course.getTitle());
+        } catch (Exception e) {
+
+        }
+    }
+
+    public ArrayList<Mark> getAllMarks(Course course){
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("marks\n" + course.getTitle());
+            return getListOfMarks();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private ArrayList<Mark> getListOfMarks() throws Exception{
+        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+        ArrayList<Mark> list = (ArrayList<Mark>)inputStream.readObject();
+        return list;
+    }
+
+
+    public ArrayList<Comment> getAllComments(Course course){
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("comments\n" + course.getTitle());
+            return getListOfComments();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private ArrayList<Comment> getListOfComments() throws Exception{
+        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+        ArrayList<Comment> list = (ArrayList<Comment>)inputStream.readObject();
+        return list;
+    }
+
+
+
+
     public ArrayList<String> listOfCourses() {
         try {
             socket = new Socket("localhost", 7755);
@@ -37,6 +87,10 @@ public class Client {
             return null;
         }
     }
+
+
+
+
 
     private ArrayList<String> getListOfCourses() throws Exception{
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());

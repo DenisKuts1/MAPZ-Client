@@ -6,10 +6,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import main.Client;
+import model.User;
 
 public class Main extends Application {
 
     public static Main main;
+    public static User user;
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("Authentication.fxml"));
