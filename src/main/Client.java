@@ -24,7 +24,7 @@ public class Client {
     Socket socket;
     public boolean downloading = false;
     public long sizeOfFile = 0;
-    public int alreadyReaded = 0;
+    public int alreadyRead = 0;
 
     public Client() {
     }
@@ -130,13 +130,13 @@ public class Client {
 
                 byte[] byteArray = new byte[8192];
                 sizeOfFile = (long)inputStream.readObject();
-                alreadyReaded = 0;
+                alreadyRead = 0;
                 System.out.println(sizeOfFile);
                 int in;
                 while ((in = bis.read(byteArray)) != -1){
                     bos.write(byteArray,0,in);
-                    alreadyReaded += 8192;
-                    double a =  1.0 * alreadyReaded / sizeOfFile;
+                    alreadyRead += 8192;
+                    double a =  1.0 * alreadyRead / sizeOfFile;
                     System.out.println(a);
                     try{
                         Thread.sleep(1);

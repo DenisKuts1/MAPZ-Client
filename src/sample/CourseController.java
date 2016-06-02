@@ -124,29 +124,29 @@ public class CourseController {
             }
         } else {
             mediaPlayer.setMediaPlayer(player);
-            ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
-            ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
-            if(markArrayList != null) {
-                ArrayList<String> strings = new ArrayList<>();
-                for (Mark mark : markArrayList) {
-                    Comment comment = null;
-                    for(Comment c : commentArrayList){
-                        if(c.getUser().getId() == mark.getUser().getId()){
-                            comment = c;
-                            break;
-                        }
+        ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
+        ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
+        if(markArrayList != null) {
+            ArrayList<String> strings = new ArrayList<>();
+            for (Mark mark : markArrayList) {
+                Comment comment = null;
+                for(Comment c : commentArrayList){
+                    if(c.getUser().getId() == mark.getUser().getId()){
+                        comment = c;
+                        break;
                     }
-                    String comm = mark.getUser().getUserName() + ": " + mark.getMark();
-                    if(comment != null){
-                        comm += " | " + comment.getComment();
-                    }
-                    strings.add(comm);
                 }
-                ObservableList<String> items = FXCollections.observableArrayList(strings);
-                comments.getItems().addAll(items);
-            } else {
-                System.out.println(2);
+                String comm = mark.getUser().getUserName() + ": " + mark.getMark();
+                if(comment != null){
+                    comm += " | " + comment.getComment();
+                }
+                strings.add(comm);
             }
+            ObservableList<String> items = FXCollections.observableArrayList(strings);
+            comments.getItems().addAll(items);
+        } else {
+            System.out.println(2);
+        }
 
 
         }
@@ -177,7 +177,7 @@ public class CourseController {
                     if(c.getUser().getId() == mark1.getUser().getId()){
                         comment1 = c;
                         int a;
-                        break;
+        fillComments();
                     }
                 }
                 String comm = mark1.getUser().getUserName() + ": " + mark1.getMark();
