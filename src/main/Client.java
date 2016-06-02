@@ -38,21 +38,41 @@ public class Client {
     public void updateCourse(String title, String description, String link) {
         try {
             if (!link.equals("")) {
-                updateVideo(link);
+                updateVideo(link, title);
             }
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("updateCourse\n" + CourseController.course.getTitle() + "\n" + title + "\n" + description);
+            outputStream.flush();
         } catch (Exception e) {
         }
     }
 
-    private void updateVideo(String link) {
+    public void createCourse(String title, String description, String link) {
+        try {
+            /*if (!link.equals("")) {
+                updateVideo(link);
+            }*/
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("createCourse\n" + title + "\n" + description);
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(link));
+            byte[] byteArray = new byte[8192];
+            int in;
+            while ((in = bis.read(byteArray)) != -1) {
+                outputStream.write(byteArray, 0, in);
+            }
+            bis.close();
+            socket.close();
+        } catch (Exception e) {
+        }
+    }
+
+    private void updateVideo(String link, String title) {
         try {
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            File file = new File(link);
-            outputStream.writeUTF("updateVideo\n" + CourseController.course.getTitle());
+            outputStream.writeUTF("updateVideo\n" + title);
             outputStream.flush();
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(link));
             byte[] byteArray = new byte[8192];
@@ -61,6 +81,7 @@ public class Client {
                 outputStream.write(byteArray, 0, in);
             }
             bis.close();
+            socket.close();
         } catch (Exception e) {
         }
     }

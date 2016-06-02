@@ -25,8 +25,7 @@ public class CourseController {
     public Slider markSlider;
     public Button deleteComment;
     public Button editCourse;
-    @FXML
-    private Button openBtn;
+    public Button createBtn;
 
     public static Course course;
 
@@ -48,8 +47,14 @@ public class CourseController {
     public static MediaPlayer player;
 
     @FXML
-    void openOnAction(ActionEvent event) {
-
+    void create(ActionEvent event) {
+        Stage stage = new Stage();
+        try {
+            EditCourseController.newCourse = true;
+            stage.setScene(new Scene(Main.getParent("EditCourseForm.fxml")));
+            ((Stage) list.getScene().getWindow()).close();
+            stage.show();
+        }catch (Exception e){}
     }
 
     @FXML
@@ -186,7 +191,9 @@ public class CourseController {
             stage.setScene(new Scene(Main.getParent("EditCourseForm.fxml")));
             ((Stage) comments.getScene().getWindow()).close();
             stage.show();
-        }catch (Exception e){}
+        }catch (Exception e){
+            System.out.println(22);
+        }
     }
 
     @FXML

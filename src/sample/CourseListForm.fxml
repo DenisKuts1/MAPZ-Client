@@ -11,7 +11,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="358.0" prefWidth="265.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CourseController">
    <children>
       <ListView fx:id="list" layoutX="14.0" layoutY="14.0" onMouseClicked="#chooseCourse" prefHeight="238.0" prefWidth="231.0" />
-      <Button fx:id="openBtn" layoutX="89.0" layoutY="319.0" mnemonicParsing="false" onAction="#openOnAction" text="OpenCourse" />
+      <Button fx:id="createBtn" layoutX="84.0" layoutY="319.0" mnemonicParsing="false" onAction="#create" text="Create Course" />
       <ProgressBar fx:id="progressBar" layoutX="33.0" layoutY="280.0" prefWidth="200.0" progress="0.0" />
    </children>
 </AnchorPane>
