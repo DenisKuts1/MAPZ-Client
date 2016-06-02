@@ -17,5 +17,16 @@
       <TextField fx:id="commentField" layoutX="72.0" layoutY="380.0" prefHeight="25.0" prefWidth="371.0" promptText="comment" />
       <Slider fx:id="markSlider" blockIncrement="1.0" layoutX="72.0" layoutY="421.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="14.0" prefWidth="371.0" showTickLabels="true" showTickMarks="true" />
       <Button fx:id="deleteComment" layoutX="10.0" layoutY="346.0" mnemonicParsing="false" onAction="#onDeleteComment" text="Delete Comment" />
+      <MenuBar layoutX="8.0" layoutY="2.0" prefHeight="25.0" prefWidth="480.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Button layoutX="14.0" layoutY="380.0" mnemonicParsing="false" onAction="#back" text="Back" />
+      <TextField fx:id="descriprion" layoutX="55.0" layoutY="307.0" prefHeight="25.0" prefWidth="400.0" />
    </children>
 </AnchorPane>

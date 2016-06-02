@@ -28,6 +28,8 @@ public class CourseController {
     public Button createBtn;
 
     public static Course course;
+    public Button evaluate;
+    public TextField descriprion;
 
     @FXML
     private ListView<String> list;
@@ -43,8 +45,57 @@ public class CourseController {
 
     public static ProgressBar bar;
 
+    @FXML
+    public void onAbout(){
+        String line;
+        if(Main.user.isModerator()){
+            line = "В цьому вікні модератор може відкрити потрібний йому курс або створити новий.";
+        } else {
+            line = "В цьому вікні користувач може вибрати курс, який він хоче переглянути.";
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,line,ButtonType.OK);
+        alert.show();
+    }
+
+    @FXML
+    public void onBack(){
+        try {
+            courses = null;
+            Stage stage = new Stage();
+            stage.setScene(new Scene(Main.getParent("Authentication.fxml")));
+            ((Stage) list.getScene().getWindow()).close();
+            stage.show();
+        }catch (Exception e){}
+    }
+
+    @FXML
+    public void back(){
+        try {
+            courses = null;
+            course = null;
+            Stage stage = new Stage();
+            stage.setScene(new Scene(Main.getParent("CourseListForm.fxml")));
+            ((Stage) comments.getScene().getWindow()).close();
+            stage.show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     public static MediaPlayer player;
+
+    @FXML
+    void about(ActionEvent event){
+        String line;
+        if(Main.user.isModerator()){
+            line = "В цьому вікні модератор може переглянути відео курсу, оцінити курс, видалити коментарі інших користувачів а також перейти у вікно редагування курсу.";
+        } else {
+            line = "В цьому вікні користувач може переглянути відео курсу та оцінити курс й залишити коментар";
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, line, ButtonType.OK);
+        alert.show();
+    }
 
     @FXML
     void create(ActionEvent event) {
@@ -135,6 +186,7 @@ public class CourseController {
     void initialize() {
         //assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'CourseListForm.fxml'.";
         //assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'CourseListForm.fxml'.";
+        if(progressBar!= null)
             bar = progressBar;
         courseController = this;
         if (course == null) {
@@ -143,6 +195,10 @@ public class CourseController {
                     courses = Main.client.listOfCourses();
                 ObservableList<String> items = FXCollections.observableArrayList(courses);
                 list.getItems().addAll(items);
+                progressBar.setProgress(0);
+                if(!Main.user.isModerator()){
+                    createBtn.setVisible(false);
+                }
             } catch (Exception w) {
 
             }
@@ -154,7 +210,9 @@ public class CourseController {
                     deleteComment.setVisible(false);
                 }
                 mediaPlayer.setMediaPlayer(player);
+                descriprion.setText(course.getDescription());
                 fillComments();
+            }catch (Exception e){}
         }
 
 
@@ -185,6 +243,12 @@ public class CourseController {
             ObservableList<String> items = FXCollections.observableArrayList(strings);
             comments.getItems().clear();
             comments.getItems().addAll(items);
+            for(Mark marks : markArrayList){
+                if(marks.getUser().getUserName().equals(Main.user.getUserName())){
+                    evaluate.setVisible(false);
+                    break;
+                }
+            }
         } else {
             System.out.println(2);
         }

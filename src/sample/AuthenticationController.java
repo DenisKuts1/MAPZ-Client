@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.*;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Mark;
 import model.User;
@@ -31,6 +28,13 @@ public class AuthenticationController {
 
     @FXML
     private Button regBtn;
+
+    @FXML
+    public void about(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,"В цьому вікні користувач може зареєструватись або ввійти в свій аккаунт",
+                ButtonType.OK);
+        alert.show();
+    }
 
     @FXML
     void authorOnAction(ActionEvent event) {
