@@ -1,8 +1,5 @@
 package main;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import model.Comment;
 import model.Course;
@@ -14,7 +11,6 @@ import sample.Main;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.Exchanger;
 
 /**
  * Created by denak on 16.05.2016.
@@ -24,12 +20,74 @@ public class Client {
     Socket socket;
     public boolean downloading = false;
     public long sizeOfFile = 0;
-    public int alreadyReaded = 0;
+    public int alreadyRead = 0;
 
     public Client() {
     }
 
-    public void addComment(int mark, String comment){
+    public void deleteComment(String username) {
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("delComment\n" + username + "\n" + CourseController.course.getTitle());
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void updateCourse(String title, String description, String link) {
+        try {
+            if (!link.equals("")) {
+                updateVideo(link, title);
+            }
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("updateCourse\n" + CourseController.course.getTitle() + "\n" + title + "\n" + description);
+            outputStream.flush();
+        } catch (Exception e) {
+        }
+    }
+
+    public void createCourse(String title, String description, String link) {
+        try {
+            /*if (!link.equals("")) {
+                updateVideo(link);
+            }*/
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("createCourse\n" + title + "\n" + description);
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(link));
+            byte[] byteArray = new byte[8192];
+            int in;
+            while ((in = bis.read(byteArray)) != -1) {
+                outputStream.write(byteArray, 0, in);
+            }
+            bis.close();
+            socket.close();
+        } catch (Exception e) {
+        }
+    }
+
+    private void updateVideo(String link, String title) {
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("updateVideo\n" + title);
+            outputStream.flush();
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(link));
+            byte[] byteArray = new byte[8192];
+            int in;
+            while ((in = bis.read(byteArray)) != -1) {
+                outputStream.write(byteArray, 0, in);
+            }
+            bis.close();
+            socket.close();
+        } catch (Exception e) {
+        }
+    }
+
+
+    public void addComment(int mark, String comment) {
         try {
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -39,7 +97,7 @@ public class Client {
         }
     }
 
-    public ArrayList<Mark> getAllMarks(Course course){
+    public ArrayList<Mark> getAllMarks(Course course) {
         try {
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -50,14 +108,14 @@ public class Client {
         }
     }
 
-    private ArrayList<Mark> getListOfMarks() throws Exception{
+    private ArrayList<Mark> getListOfMarks() throws Exception {
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-        ArrayList<Mark> list = (ArrayList<Mark>)inputStream.readObject();
+        ArrayList<Mark> list = (ArrayList<Mark>) inputStream.readObject();
         return list;
     }
 
 
-    public ArrayList<Comment> getAllComments(Course course){
+    public ArrayList<Comment> getAllComments(Course course) {
         try {
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
@@ -68,13 +126,11 @@ public class Client {
         }
     }
 
-    private ArrayList<Comment> getListOfComments() throws Exception{
+    private ArrayList<Comment> getListOfComments() throws Exception {
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-        ArrayList<Comment> list = (ArrayList<Comment>)inputStream.readObject();
+        ArrayList<Comment> list = (ArrayList<Comment>) inputStream.readObject();
         return list;
     }
-
-
 
 
     public ArrayList<String> listOfCourses() {
@@ -89,27 +145,24 @@ public class Client {
     }
 
 
-
-
-
-    private ArrayList<String> getListOfCourses() throws Exception{
-            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-            return (ArrayList<String>)inputStream.readObject();
+    private ArrayList<String> getListOfCourses() throws Exception {
+        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+        return (ArrayList<String>) inputStream.readObject();
     }
 
-    public void downloadFile(String filename){
-        try{
+    public void downloadFile(String filename) {
+        try {
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("download\n" + filename);
             outputStream.flush();
             download(filename);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void download(String filename) throws Exception{
+    private void download(String filename) throws Exception {
         /*BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename));
         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
         byte[] byteArray = new byte[8192];
@@ -129,18 +182,19 @@ public class Client {
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filename));
 
                 byte[] byteArray = new byte[8192];
-                sizeOfFile = (long)inputStream.readObject();
-                alreadyReaded = 0;
+                sizeOfFile = (long) inputStream.readObject();
+                alreadyRead = 0;
                 System.out.println(sizeOfFile);
                 int in;
-                while ((in = bis.read(byteArray)) != -1){
-                    bos.write(byteArray,0,in);
-                    alreadyReaded += 8192;
-                    double a =  1.0 * alreadyReaded / sizeOfFile;
+                while ((in = bis.read(byteArray)) != -1) {
+                    bos.write(byteArray, 0, in);
+                    alreadyRead += 8192;
+                    double a = 1.0 * alreadyRead / sizeOfFile;
                     System.out.println(a);
-                    try{
+                    try {
                         Thread.sleep(1);
-                    }catch (Exception e){}
+                    } catch (Exception e) {
+                    }
                     updateValue(a);
                 }
                 bis.close();
@@ -158,29 +212,24 @@ public class Client {
         new Thread(task).start();
 
 
-
-
-
     }
 
 
-
-
-    public Course course(String name){
-        try{
+    public Course course(String name) {
+        try {
             socket = new Socket("localhost", 7755);
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("course\n" + name);
             outputStream.flush();
             return getCourse();
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    private Course getCourse()throws Exception{
+    private Course getCourse() throws Exception {
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-        return (Course)inputStream.readObject();
+        return (Course) inputStream.readObject();
     }
 
 

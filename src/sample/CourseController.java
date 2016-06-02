@@ -23,8 +23,9 @@ public class CourseController {
 
     public TextField commentField;
     public Slider markSlider;
-    @FXML
-    private Button openBtn;
+    public Button deleteComment;
+    public Button editCourse;
+    public Button createBtn;
 
     public static Course course;
 
@@ -43,11 +44,26 @@ public class CourseController {
     public static ProgressBar bar;
 
 
-    private static MediaPlayer player;
+    public static MediaPlayer player;
 
     @FXML
-    void openOnAction(ActionEvent event) {
+    void create(ActionEvent event) {
+        Stage stage = new Stage();
+        try {
+            EditCourseController.newCourse = true;
+            stage.setScene(new Scene(Main.getParent("EditCourseForm.fxml")));
+            ((Stage) list.getScene().getWindow()).close();
+            stage.show();
+        }catch (Exception e){}
+    }
 
+    @FXML
+    void onDeleteComment(ActionEvent event) {
+        String line = comments.getFocusModel().getFocusedItem();
+        if(line != null){
+            Main.client.deleteComment(line.substring(0,line.indexOf(':')));
+            fillComments();
+        }
     }
 
     public static CourseController courseController;
@@ -60,7 +76,7 @@ public class CourseController {
 
             File file = new File(course.getLink());
             if (file.exists()) {
-                openNewStage();
+                openNewStage("CourseForm.fxml");
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
                 Optional<ButtonType> result = alert.showAndWait();
@@ -75,10 +91,13 @@ public class CourseController {
 
 
 
+        } else
+        {
+            // Надо перезагрузится
         }
     }
 
-    public void openNewStage(){
+    public void openNewStage(String filename){
 
         try {
 
@@ -93,7 +112,7 @@ public class CourseController {
 
             Stage stage = new Stage();
 
-            stage.setScene(new Scene(Main.getParent("CourseForm.fxml")));
+            stage.setScene(new Scene(Main.getParent(filename)));
             ((Stage) list.getScene().getWindow()).close();
             stage.show();
 
@@ -104,9 +123,7 @@ public class CourseController {
         }
     }
 
-    void checkVideoExist(String path) {
-
-    }
+    public static ArrayList<String> courses;
 
     @FXML
     void initialize() {
@@ -116,47 +133,67 @@ public class CourseController {
         courseController = this;
         if (course == null) {
             try {
-                ArrayList<String> arrayList = Main.client.listOfCourses();
-                ObservableList<String> items = FXCollections.observableArrayList(arrayList);
+                if(courses==null)
+                    courses = Main.client.listOfCourses();
+                ObservableList<String> items = FXCollections.observableArrayList(courses);
                 list.getItems().addAll(items);
             } catch (Exception w) {
 
             }
         } else {
-            mediaPlayer.setMediaPlayer(player);
-            ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
-            ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
-            if(markArrayList != null) {
-                ArrayList<String> strings = new ArrayList<>();
-                for (Mark mark : markArrayList) {
-                    Comment comment = null;
-                    for(Comment c : commentArrayList){
-                        if(c.getUser().getId() == mark.getUser().getId()){
-                            comment = c;
-                            break;
-                        }
-                    }
-                    String comm = mark.getUser().getUserName() + ": " + mark.getMark();
-                    if(comment != null){
-                        comm += " | " + comment.getComment();
-                    }
-                    strings.add(comm);
-                }
-                ObservableList<String> items = FXCollections.observableArrayList(strings);
-                comments.getItems().addAll(items);
-            } else {
-                System.out.println(2);
+
+            if(!Main.user.isModerator()){
+                editCourse.setVisible(false);
+                deleteComment.setVisible(false);
             }
-
-
+            mediaPlayer.setMediaPlayer(player);
+            fillComments();
         }
 
 
     }
 
+    void fillComments(){
+        try {
+            Thread.sleep(10);
+        }catch (Exception e){}
+        ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
+        ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
+        if(markArrayList != null) {
+            ArrayList<String> strings = new ArrayList<>();
+            for (Mark mark : markArrayList) {
+                Comment comment = null;
+                for(Comment c : commentArrayList){
+                    if(c.getUser().getId() == mark.getUser().getId()){
+                        comment = c;
+                        break;
+                    }
+                }
+                String comm = mark.getUser().getUserName() + ": " + mark.getMark();
+                if(comment != null){
+                    comm += " | " + comment.getComment();
+                }
+                strings.add(comm);
+            }
+            ObservableList<String> items = FXCollections.observableArrayList(strings);
+            comments.getItems().clear();
+            comments.getItems().addAll(items);
+        } else {
+            System.out.println(2);
+        }
+    }
+
     @FXML
     void editOnAction(ActionEvent event) {
-
+        EditCourseController.newCourse = false;
+        Stage stage = new Stage();
+        try {
+            stage.setScene(new Scene(Main.getParent("EditCourseForm.fxml")));
+            ((Stage) comments.getScene().getWindow()).close();
+            stage.show();
+        }catch (Exception e){
+            System.out.println(22);
+        }
     }
 
     @FXML
@@ -167,32 +204,7 @@ public class CourseController {
         try{
             Thread.sleep(10);
         } catch (Exception e){}
-        ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
-        ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
-        if(!markArrayList.isEmpty()) {
-            ArrayList<String> strings = new ArrayList<>();
-            for (Mark mark1 : markArrayList) {
-                Comment comment1 = null;
-                for(Comment c : commentArrayList){
-                    if(c.getUser().getId() == mark1.getUser().getId()){
-                        comment1 = c;
-                        int a;
-                        break;
-                    }
-                }
-                String comm = mark1.getUser().getUserName() + ": " + mark1.getMark();
-                if(comment != null){
-                    comm += " | " + comment1.getComment();
-                }
-                strings.add(comm);
-            }
-            ObservableList<String> items = FXCollections.observableArrayList(strings);
-            comments.getItems().clear();
-            comments.getItems().addAll(items);
-            System.out.println(items.size());
-        } else {
-            System.out.println(2);
-        }
+        fillComments();
     }
 
     @FXML

@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import main.Client;
 import model.User;
 
+import java.io.File;
+
 public class Main extends Application {
 
     public static Main main;
