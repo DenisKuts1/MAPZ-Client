@@ -97,6 +97,16 @@ public class Client {
         }
     }
 
+    public void deleteCourse(){
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("deleteCourse\n" + CourseController.course.getTitle());
+        } catch (Exception e) {
+
+        }
+    }
+
     public ArrayList<Mark> getAllMarks(Course course) {
         try {
             socket = new Socket("localhost", 7755);

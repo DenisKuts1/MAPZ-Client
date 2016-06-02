@@ -22,5 +22,6 @@
           </Menu>
         </menus>
       </MenuBar>
+      <Button fx:id="delete" layoutX="342.0" layoutY="179.0" mnemonicParsing="false" onAction="#delete" text="Delete Course" />
    </children>
 </AnchorPane>

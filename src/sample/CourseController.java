@@ -49,12 +49,18 @@ public class CourseController {
     @FXML
     void create(ActionEvent event) {
         Stage stage = new Stage();
+        System.out.println(1);
         try {
             EditCourseController.newCourse = true;
+            System.out.println(2);
             stage.setScene(new Scene(Main.getParent("EditCourseForm.fxml")));
+            System.out.println(3);
             ((Stage) list.getScene().getWindow()).close();
+            System.out.println(4);
             stage.show();
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
