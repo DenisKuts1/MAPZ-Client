@@ -45,7 +45,7 @@ public class CourseController {
     public static ProgressBar bar;
 
 
-    private static MediaPlayer player;
+    public static MediaPlayer player;
 
     @FXML
     void openOnAction(ActionEvent event) {
@@ -71,7 +71,7 @@ public class CourseController {
 
             File file = new File(course.getLink());
             if (file.exists()) {
-                openNewStage();
+                openNewStage("CourseForm.fxml");
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Do you want to download video?", ButtonType.YES, ButtonType.NO);
                 Optional<ButtonType> result = alert.showAndWait();
@@ -86,10 +86,13 @@ public class CourseController {
 
 
 
+        } else
+        {
+            // Надо перезагрузится
         }
     }
 
-    public void openNewStage(){
+    public void openNewStage(String filename){
 
         try {
 
@@ -104,7 +107,7 @@ public class CourseController {
 
             Stage stage = new Stage();
 
-            stage.setScene(new Scene(Main.getParent("CourseForm.fxml")));
+            stage.setScene(new Scene(Main.getParent(filename)));
             ((Stage) list.getScene().getWindow()).close();
             stage.show();
 
@@ -115,9 +118,7 @@ public class CourseController {
         }
     }
 
-    void checkVideoExist(String path) {
-
-    }
+    public static ArrayList<String> courses;
 
     @FXML
     void initialize() {
@@ -127,8 +128,9 @@ public class CourseController {
         courseController = this;
         if (course == null) {
             try {
-                ArrayList<String> arrayList = Main.client.listOfCourses();
-                ObservableList<String> items = FXCollections.observableArrayList(arrayList);
+                if(courses==null)
+                    courses = Main.client.listOfCourses();
+                ObservableList<String> items = FXCollections.observableArrayList(courses);
                 list.getItems().addAll(items);
             } catch (Exception w) {
 
@@ -178,7 +180,13 @@ public class CourseController {
 
     @FXML
     void editOnAction(ActionEvent event) {
-
+        EditCourseController.newCourse = false;
+        Stage stage = new Stage();
+        try {
+            stage.setScene(new Scene(Main.getParent("EditCourseForm.fxml")));
+            ((Stage) comments.getScene().getWindow()).close();
+            stage.show();
+        }catch (Exception e){}
     }
 
     @FXML
