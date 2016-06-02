@@ -135,7 +135,7 @@ public class CourseController {
     void initialize() {
         //assert openBtn != null : "fx:id=\"openBtn\" was not injected: check your FXML file 'CourseListForm.fxml'.";
         //assert list != null : "fx:id=\"list\" was not injected: check your FXML file 'CourseListForm.fxml'.";
-        bar = progressBar;
+            bar = progressBar;
         courseController = this;
         if (course == null) {
             try {
@@ -147,13 +147,14 @@ public class CourseController {
 
             }
         } else {
+            try {
 
-            if(!Main.user.isModerator()){
-                editCourse.setVisible(false);
-                deleteComment.setVisible(false);
-            }
-            mediaPlayer.setMediaPlayer(player);
-            fillComments();
+                if (!Main.user.isModerator()) {
+                    editCourse.setVisible(false);
+                    deleteComment.setVisible(false);
+                }
+                mediaPlayer.setMediaPlayer(player);
+                fillComments();
         }
 
 
@@ -161,7 +162,7 @@ public class CourseController {
 
     void fillComments(){
         try {
-            Thread.sleep(10);
+            Thread.sleep(30);
         }catch (Exception e){}
         ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
         ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
@@ -208,7 +209,7 @@ public class CourseController {
         String comment = commentField.getText();
         Main.client.addComment(mark, comment);
         try{
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (Exception e){}
         fillComments();
     }
