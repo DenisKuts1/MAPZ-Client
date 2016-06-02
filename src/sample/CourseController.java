@@ -23,6 +23,8 @@ public class CourseController {
 
     public TextField commentField;
     public Slider markSlider;
+    public Button deleteComment;
+    public Button editCourse;
     @FXML
     private Button openBtn;
 
@@ -48,6 +50,15 @@ public class CourseController {
     @FXML
     void openOnAction(ActionEvent event) {
 
+    }
+
+    @FXML
+    void onDeleteComment(ActionEvent event) {
+        String line = comments.getFocusModel().getFocusedItem();
+        if(line != null){
+            Main.client.deleteComment(line.substring(0,line.indexOf(':')));
+            fillComments();
+        }
     }
 
     public static CourseController courseController;
@@ -123,7 +134,22 @@ public class CourseController {
 
             }
         } else {
+
+            if(!Main.user.isModerator()){
+                editCourse.setVisible(false);
+                deleteComment.setVisible(false);
+            }
             mediaPlayer.setMediaPlayer(player);
+            fillComments();
+        }
+
+
+    }
+
+    void fillComments(){
+        try {
+            Thread.sleep(10);
+        }catch (Exception e){}
         ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
         ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
         if(markArrayList != null) {
@@ -143,15 +169,11 @@ public class CourseController {
                 strings.add(comm);
             }
             ObservableList<String> items = FXCollections.observableArrayList(strings);
+            comments.getItems().clear();
             comments.getItems().addAll(items);
         } else {
             System.out.println(2);
         }
-
-
-        }
-
-
     }
 
     @FXML
@@ -167,32 +189,7 @@ public class CourseController {
         try{
             Thread.sleep(10);
         } catch (Exception e){}
-        ArrayList<Mark> markArrayList = Main.client.getAllMarks(course);
-        ArrayList<Comment> commentArrayList = Main.client.getAllComments(course);
-        if(!markArrayList.isEmpty()) {
-            ArrayList<String> strings = new ArrayList<>();
-            for (Mark mark1 : markArrayList) {
-                Comment comment1 = null;
-                for(Comment c : commentArrayList){
-                    if(c.getUser().getId() == mark1.getUser().getId()){
-                        comment1 = c;
-                        int a;
         fillComments();
-                    }
-                }
-                String comm = mark1.getUser().getUserName() + ": " + mark1.getMark();
-                if(comment != null){
-                    comm += " | " + comment1.getComment();
-                }
-                strings.add(comm);
-            }
-            ObservableList<String> items = FXCollections.observableArrayList(strings);
-            comments.getItems().clear();
-            comments.getItems().addAll(items);
-            System.out.println(items.size());
-        } else {
-            System.out.println(2);
-        }
     }
 
     @FXML

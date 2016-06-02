@@ -1,8 +1,5 @@
 package main;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import model.Comment;
 import model.Course;
@@ -14,7 +11,6 @@ import sample.Main;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.Exchanger;
 
 /**
  * Created by denak on 16.05.2016.
@@ -28,6 +24,21 @@ public class Client {
 
     public Client() {
     }
+
+    public void deleteComment(String username){
+        try {
+            socket = new Socket("localhost", 7755);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF("delComment\n" + username + "\n" + CourseController.course.getTitle());
+        } catch (Exception e) {
+
+        }
+    }
+
+
+
+
+
 
     public void addComment(int mark, String comment){
         try {

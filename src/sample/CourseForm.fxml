@@ -16,5 +16,6 @@
       <ListView fx:id="comments" layoutX="62.0" layoutY="428.0" prefHeight="148.0" prefWidth="391.0" />
       <TextField fx:id="commentField" layoutX="72.0" layoutY="354.0" prefHeight="25.0" prefWidth="371.0" promptText="comment" />
       <Slider fx:id="markSlider" blockIncrement="1.0" layoutX="72.0" layoutY="398.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="14.0" prefWidth="371.0" showTickLabels="true" showTickMarks="true" />
+      <Button fx:id="deleteComment" layoutX="9.0" layoutY="321.0" mnemonicParsing="false" onAction="#onDeleteComment" text="Delete Comment" />
    </children>
 </AnchorPane>
